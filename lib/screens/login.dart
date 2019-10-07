@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sample_app/data/join_or_login.dart';
 import 'package:flutter_sample_app/helper/login_background.dart';
+import 'package:provider/provider.dart';
 
 class AuthPage extends StatelessWidget {
   final GlobalKey<FormState> _formKey =
@@ -17,7 +19,7 @@ class AuthPage extends StatelessWidget {
         children: <Widget>[
           CustomPaint(
             size: size,
-            painter: LoginBackground(),
+            painter: LoginBackground(isJoin : Provider.of<JoinOrLogin>(context).isJoin),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -33,7 +35,15 @@ class AuthPage extends StatelessWidget {
               Container(
                 height: size.height * 0.1,
               ),
-              Text('텍스트 들어갈 자리'),
+              Consumer<JoinOrLogin>(
+                builder: (context, joinOrLogin, child) =>
+                    GestureDetector(
+                        onTap: () {
+                          joinOrLogin.toggle();
+                        },
+                        child: Text(joinOrLogin.isJoin ? "Are you have an account? Sign in" : "Don't Have an Account? Create One",
+                          style: TextStyle(color: joinOrLogin.isJoin? Colors.red : Colors.blue),)),
+              ),
               Container(
                 height: size.height * 0.05,
               ),
@@ -50,8 +60,8 @@ class AuthPage extends StatelessWidget {
           child: FittedBox(
             fit: BoxFit.contain,
             child: CircleAvatar(
-              backgroundImage: NetworkImage(
-                "https://picsum.photos/200",
+              backgroundImage: AssetImage(
+                "assets/images/profile.gif",
               ),
             ),
           ),
@@ -65,16 +75,18 @@ class AuthPage extends StatelessWidget {
       bottom: 0,
       child: SizedBox(
         height: 50,
-        child: RaisedButton(
-          color: Colors.blue,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-          child: Text('Login', style: TextStyle(fontSize: 20, color: Colors.white),),
-          onPressed: () {
-            if(_formKey.currentState.validate()) {
-              print(_emailController.text.toString());
-            }
-          },
+        child: Consumer<JoinOrLogin>(
+          builder: (context, value, child)=> RaisedButton(
+            color: value.isJoin ? Colors.red : Colors.blue,
+            shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+            child: Text(value.isJoin ? 'Join' : 'Login', style: TextStyle(fontSize: 20, color: Colors.white),),
+            onPressed: () {
+              if(_formKey.currentState.validate()) {
+                print(_emailController.text.toString());
+              }
+            },
+          ),
         ),
       ),
     );
@@ -124,7 +136,11 @@ class AuthPage extends StatelessWidget {
                 Container(
                   height: 10,
                 ),
-                Text("Forgot Password"),
+                Consumer<JoinOrLogin>(
+                  builder: (context, value, child) => Opacity(
+                      opacity: value.isJoin? 0 : 1,
+                      child: Text("Forgot Password")),
+                ),
               ],
             ),
           ),
