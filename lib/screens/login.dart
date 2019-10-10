@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sample_app/data/join_or_login.dart';
@@ -54,6 +55,32 @@ class AuthPage extends StatelessWidget {
     );
   }
 
+  void _register(BuildContext context) async {
+    final AuthResult result
+    = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text, password: _passwordController.text);
+    final FirebaseUser user = result.user;
+
+    if(user == null) {
+      final snackbar = SnackBar(content: Text('Please try again.'));
+      Scaffold.of(context).showSnackBar(snackbar);
+    }
+
+  }
+
+  void _login(BuildContext context) async {
+    final AuthResult result
+    = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text, password: _passwordController.text);
+    final FirebaseUser user = result.user;
+
+    if(user == null) {
+      final snackbar = SnackBar(content: Text('Please try again.'));
+      Scaffold.of(context).showSnackBar(snackbar);
+    }
+
+  }
+
   Expanded get _logoImage => Expanded(
         child: Padding(
           padding: const EdgeInsets.only(top: 40.0, left: 24, right: 24),
@@ -83,7 +110,7 @@ class AuthPage extends StatelessWidget {
             child: Text(value.isJoin ? 'Join' : 'Login', style: TextStyle(fontSize: 20, color: Colors.white),),
             onPressed: () {
               if(_formKey.currentState.validate()) {
-                print(_emailController.text.toString());
+                value.isJoin ? _register(context) : _login(context);
               }
             },
           ),
