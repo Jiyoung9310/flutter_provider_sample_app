@@ -14,6 +14,8 @@ class MainPage extends StatelessWidget {
       body: Container(
         child: Center(
           child: FlatButton(
+            color: Colors.blue,
+            textColor: Colors.white,
             onPressed: () {
               FirebaseAuth.instance.signOut();
             },
