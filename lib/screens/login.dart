@@ -59,25 +59,36 @@ class AuthPage extends StatelessWidget {
   void _register(BuildContext context) async {
     final AuthResult result
     = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _emailController.text, password: _passwordController.text);
+        email: _emailController.text, password: _passwordController.text)
+        .catchError((e) {
+      _showSnackBar(context, "${e.message}");
+    });
+    
     final FirebaseUser user = result.user;
 
     if(user == null) {
-      final snackbar = SnackBar(content: Text('Please try again.'));
-      Scaffold.of(context).showSnackBar(snackbar);
+      _showSnackBar(context, 'Please try again.');
+
     }
 
+  }
+
+  void _showSnackBar(BuildContext context, String msg) {
+    final snackbar = SnackBar(content: Text(msg));
+    Scaffold.of(context).showSnackBar(snackbar);
   }
 
   void _login(BuildContext context) async {
     final AuthResult result
     = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text, password: _passwordController.text);
+        email: _emailController.text, password: _passwordController.text)
+        .catchError((e) {
+      _showSnackBar(context, "${e.message}");
+    });
     final FirebaseUser user = result.user;
 
     if(user == null) {
-      final snackbar = SnackBar(content: Text('Please try again.'));
-      Scaffold.of(context).showSnackBar(snackbar);
+      _showSnackBar(context, 'Please try again.');
     }
 
   }
