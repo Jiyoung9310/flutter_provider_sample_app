@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sample_app/data/join_or_login.dart';
 import 'package:flutter_sample_app/helper/login_background.dart';
 import 'package:provider/provider.dart';
+import 'forget_password.dart';
 
 class AuthPage extends StatelessWidget {
   final GlobalKey<FormState> _formKey =
@@ -166,7 +167,12 @@ class AuthPage extends StatelessWidget {
                 Consumer<JoinOrLogin>(
                   builder: (context, value, child) => Opacity(
                       opacity: value.isJoin? 0 : 1,
-                      child: Text("Forgot Password")),
+                      child: GestureDetector(
+                          onTap: value.isJoin ? null : () {
+                            Navigator.push(context, MaterialPageRoute(builder:
+                                (context) => _goToForgetPassword()));
+                          },
+                          child: Text("Forgot Password"))),
                 ),
               ],
             ),
@@ -175,4 +181,6 @@ class AuthPage extends StatelessWidget {
       ),
     );
   }
+
+  ForgetPassword _goToForgetPassword() => ForgetPassword();
 }
